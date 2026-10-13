@@ -1,5 +1,43 @@
+import { createNavigationContainerRef } from '@react-navigation/native';
 import Toast from 'react-native-simple-toast';
 import { Strings } from '../Constants/Strings';
+import { store } from '../Redux/Store';
+
+export const navigationRef = createNavigationContainerRef();
+
+export const NOTIFICATION_SCREEN_PARAMS = {
+  screen: 'BottomNavigation',
+  params: {
+    screen: 'BottomNavigation',
+    params: {
+      screen: 'Notification',
+    },
+  },
+};
+
+let pendingNotificationOpen = false;
+
+const canOpenNotificationScreen = () => {
+  const state = store.getState();
+  const token = state?.AUTH?.userData?.token;
+  const role = state?.ROLE?.userData;
+
+  return Boolean(token && role);
+};
+
+export const markNotificationOpenPending = () => {
+  pendingNotificationOpen = true;
+};
+
+export const openNotificationScreen = () => {
+  if (!pendingNotificationOpen || !canOpenNotificationScreen() || !navigationRef.isReady()) {
+    return false;
+  }
+
+  pendingNotificationOpen = false;
+  navigationRef.navigate('Drawer', NOTIFICATION_SCREEN_PARAMS);
+  return true;
+};
 import {
   getLastSelectedStaffMember,
   getValidStaffId,

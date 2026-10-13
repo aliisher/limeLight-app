@@ -55,6 +55,20 @@ const WeeklyPerformanceItem = ({ item }) => {
       >
         {item?.status}
       </Text>
+
+      {item?.statusNote ? (
+        <Text
+          style={[
+            styles.statusText,
+            { color: item?.statusNoteColor ?? Colors.brightBlue },
+          ]}
+          numberOfLines={1}
+          adjustsFontSizeToFit
+          minimumFontScale={0.75}
+        >
+          {item.statusNote}
+        </Text>
+      ) : null}
     </View>
   );
 };

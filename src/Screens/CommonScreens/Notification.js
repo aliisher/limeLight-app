@@ -7,6 +7,7 @@ import {
   Text,
   View,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import NotificationCard from '../../Components/NotificationCard';
 import MainHeaderComponent from '../../Components/MainHeaderComponent';
@@ -102,8 +103,12 @@ const Notification = () => {
   const unreadLabel = `${unreadCount} Unread`;
 
   return (
-    <View style={MyStyling.container2}>
-      <StatusBar barStyle="dark-content" backgroundColor={Colors.white} />
+    <SafeAreaView style={MyStyling.container2} edges={['top']}>
+      <StatusBar
+        barStyle="dark-content"
+        backgroundColor={Colors.white}
+        translucent={false}
+      />
 
       <FlatList
         data={notifications}
@@ -125,7 +130,7 @@ const Notification = () => {
           <View>
             <MainHeaderComponent
               title={Strings.notificationHeader}
-              notificationCount={unreadCount}
+              showNotification
             />
             <View style={styles.sectionRow}>
               <Text style={styles.sectionTitle} numberOfLines={1}>
@@ -149,14 +154,14 @@ const Notification = () => {
           )
         }
       />
-    </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   listContent: {
-    paddingHorizontal: wp(6),
-    paddingTop: hp(3),
+    paddingHorizontal: wp(4),
+    paddingTop: hp(2),
     paddingBottom: hp(4),
     flexGrow: 1,
   },
@@ -165,18 +170,21 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     marginBottom: hp(1.5),
+    gap: wp(2),
   },
   sectionTitle: {
+    flex: 1,
+    flexShrink: 1,
     fontSize: Fontsize.xs2,
     fontFamily: Fonts.poppinsSemiBold,
     color: Colors.black,
-    width: wp(40),
   },
   unreadText: {
+    flexShrink: 0,
     fontSize: Fontsize.xmm,
     fontFamily: Fonts.poppinsRegular,
     color: Colors.mediumGrey,
-    width: wp(14),
+    textAlign: 'right',
   },
   emptyText: {
     textAlign: 'center',
@@ -184,6 +192,8 @@ const styles = StyleSheet.create({
     fontFamily: Fonts.poppinsRegular,
     color: Colors.mediumGrey,
     marginTop: hp(4),
+    paddingHorizontal: wp(4),
+    lineHeight: Fontsize.s * 1.4,
   },
 });
 

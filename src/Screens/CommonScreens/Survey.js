@@ -154,7 +154,7 @@ const Survey = () => {
         <View style={styles.loaderWrap}>
           <MainHeaderComponent
             title={Strings.surveyHeader}
-            notificationCount={5}
+            showNotification
           />
           <ScreenLoader />
         </View>
@@ -166,7 +166,7 @@ const Survey = () => {
           ListHeaderComponent={
             <MainHeaderComponent
               title={Strings.surveyHeader}
-              notificationCount={5}
+              showNotification
             />
           }
           ListEmptyComponent={

@@ -1,17 +1,44 @@
-import React from 'react';
+import React, { useCallback, useState } from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import Feather from 'react-native-vector-icons/Feather';
 import { Images } from '../Assets';
 import { hp, wp } from '../Assets/Responsive';
 import { Colors } from '../Constants/Colors';
 import { Fonts } from '../Constants/Fonts';
 import { Fontsize } from '../Constants/Fontsize';
-
-const NOTIFICATION_COUNT = 5;
+import Api from '../Services/Api_services';
+import {
+  getUnreadNotificationCount,
+  mapNotifications,
+} from '../Utils/notificationMappers';
 
 const TrainingHeader = () => {
   const navigation = useNavigation();
+  const [notificationCount, setNotificationCount] = useState(0);
+
+  const fetchUnreadCount = useCallback(async () => {
+    try {
+      const res = await Api.getNotifications();
+      const resJson = res?.data ?? {};
+
+      if (res?.status == 200) {
+        const mapped = mapNotifications(resJson?.data ?? resJson);
+        setNotificationCount(getUnreadNotificationCount(mapped));
+      }
+    } catch (error) {
+      console.log(
+        'Training notification count error:',
+        error?.response?.data ?? error?.message ?? error,
+      );
+    }
+  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchUnreadCount();
+    }, [fetchUnreadCount]),
+  );
 
   return (
     <View style={styles.header}>
@@ -35,9 +62,9 @@ const TrainingHeader = () => {
         onPress={() => navigation.navigate('Notification')}
       >
         <Feather name="bell" size={wp(5.5)} color={Colors.black} />
-        {NOTIFICATION_COUNT > 0 && (
+        {notificationCount > 0 && (
           <View style={styles.badge}>
-            <Text style={styles.badgeText}>{NOTIFICATION_COUNT}</Text>
+            <Text style={styles.badgeText}>{notificationCount}</Text>
           </View>
         )}
       </TouchableOpacity>

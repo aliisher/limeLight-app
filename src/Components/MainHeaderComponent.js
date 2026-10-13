@@ -1,17 +1,50 @@
-import React from 'react';
+import React, { useCallback, useState } from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { Images } from '../Assets';
 import { hp, wp } from '../Assets/Responsive';
 import { Colors } from '../Constants/Colors';
 import { Fontsize } from '../Constants/Fontsize';
 import { Fonts } from '../Constants/Fonts';
 import { navigateToNotification } from '../Navigations/navigationHelpers';
+import Api from '../Services/Api_services';
+import {
+  getUnreadNotificationCount,
+  mapNotifications,
+} from '../Utils/notificationMappers';
 
 const MainHeaderComponent = props => {
   const navigation = useNavigation();
-  const count = props.notificationCount || 0;
-  const showNotification = props.notificationCount != null;
+  const showNotification =
+    props.showNotification || props.notificationCount != null;
+  const [notificationCount, setNotificationCount] = useState(0);
+
+  const fetchUnreadCount = useCallback(async () => {
+    try {
+      const res = await Api.getNotifications();
+      const resJson = res?.data ?? {};
+
+      if (res?.status == 200) {
+        const mapped = mapNotifications(resJson?.data ?? resJson);
+        setNotificationCount(getUnreadNotificationCount(mapped));
+      }
+    } catch (error) {
+      console.log(
+        'Header notification count error:',
+        error?.response?.data ?? error?.message ?? error,
+      );
+    }
+  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      if (!showNotification) {
+        return;
+      }
+
+      fetchUnreadCount();
+    }, [fetchUnreadCount, showNotification]),
+  );
 
   return (
     <View style={[styles.header, props.style]}>
@@ -40,9 +73,9 @@ const MainHeaderComponent = props => {
             resizeMode="contain"
             style={styles.bellIcon}
           />
-          {count > 0 && (
+          {notificationCount > 0 && (
             <View style={styles.badge}>
-              <Text style={styles.badgeText}>{count}</Text>
+              <Text style={styles.badgeText}>{notificationCount}</Text>
             </View>
           )}
         </TouchableOpacity>
@@ -92,12 +125,13 @@ const styles = StyleSheet.create({
   },
   badge: {
     position: 'absolute',
-    top: -hp(0.6),
-    right: -wp(0.1),
+    top: -hp(0.7),
+    right: -wp(1.2),
     backgroundColor: Colors.red,
-    width: wp(4),
-    height: wp(4),
-    borderRadius: wp(2.25),
+    minWidth: wp(4.2),
+    height: wp(4.2),
+    paddingHorizontal: wp(0.6),
+    borderRadius: wp(2.1),
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -105,6 +139,8 @@ const styles = StyleSheet.create({
     color: Colors.white,
     fontSize: Fontsize.xs,
     fontFamily: Fonts.poppinsSemiBold,
+    textAlign: 'center',
+    includeFontPadding: false,
   },
   placeholder: {
     width: wp(6.5),

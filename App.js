@@ -8,11 +8,12 @@ import AuthTokenSync from './src/Components/AuthTokenSync';
 import SplashView from './src/Components/SplashView';
 import MainNavigation from './src/Navigations/MainNavigation';
 import { persistor, store } from './src/Redux/Store';
+import { MyStyling } from './src/Constants/Styling';
 
 const App = () => {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <SafeAreaProvider>
+      <SafeAreaProvider >
         <Provider store={store}>
           <PersistGate loading={<SplashView />} persistor={persistor}>
             <AuthTokenSync />

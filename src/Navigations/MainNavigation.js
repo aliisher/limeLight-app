@@ -1,6 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import {
+  getMessaging,
+  onNotificationOpenedApp,
+} from '@react-native-firebase/messaging';
 import SplashScreen from '../Screens/StartScreens/SplashScreen';
 import Role from '../Screens/StartScreens/Role';
 import AuthNavigation from './AuthNavigation';
@@ -10,11 +14,30 @@ import TargetAssignment from '../Screens/AppFlow/TargetAssignment';
 import BranchTargets from '../Screens/AppFlow/BranchTargets';
 import BranchStaffComparison from '../Screens/AppFlow/BranchStaffComparison';
 import SurveyResponse from '../Screens/CommonScreens/SurveyResponse';
+import {
+  markNotificationOpenPending,
+  navigationRef,
+  openNotificationScreen,
+} from './navigationHelpers';
 const MAIN_STACK = createNativeStackNavigator();
 
 const MainNavigation = () => {
+  useEffect(() => {
+    const unsubscribe = onNotificationOpenedApp(getMessaging(), () => {
+      markNotificationOpenPending();
+      openNotificationScreen();
+    });
+
+    return unsubscribe;
+  }, []);
+
   return (
-    <NavigationContainer>
+    <NavigationContainer
+      ref={navigationRef}
+      onReady={() => {
+        openNotificationScreen();
+      }}
+    >
       <MAIN_STACK.Navigator
         initialRouteName="SplashScreen"
         screenOptions={{ headerShown: false }}

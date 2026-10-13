@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "896232245545",
+    "project_id": "limelightsalesperformance",
+    "storage_bucket": "limelightsalesperformance.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:896232245545:android:95faf9797bf4becc6c4f38",
+        "android_client_info": {
+          "package_name": "com.limelightsalesperformance"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAkbKDJpzjXI7LE5LYqEb6MXNwEc4RURzM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

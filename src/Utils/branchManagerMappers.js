@@ -86,6 +86,10 @@ const getStatusColor = status => {
     return Colors.vividAmber;
   }
 
+  if (normalized.includes('mv')) {
+    return Colors.brightBlue;
+  }
+
   if (normalized.includes('active')) {
     return Colors.brightBlue;
   }
@@ -155,24 +159,109 @@ const getWeekOverAchieved = (weeklyOverAchieved, key, index) => {
   );
 };
 
-const resolveWeekStatus = (units, targetUnits, carryForward, weekData) => {
-  if (weekData?.status) {
-    return weekData.status;
+const getWeekCarryForward = (weeklyCarryForward, key, index) => {
+  if (weeklyCarryForward == null) {
+    return 0;
   }
+
+  if (Array.isArray(weeklyCarryForward)) {
+    return Number(weeklyCarryForward[index] ?? 0);
+  }
+
+  return Number(
+    weeklyCarryForward?.[key] ??
+      weeklyCarryForward?.[WEEK_LABELS[index]] ??
+      weeklyCarryForward?.[index] ??
+      0,
+  );
+};
+
+const formatWeekStatusAmount = value => {
+  const amount = Number(value);
+
+  if (!Number.isFinite(amount) || amount <= 0) {
+    return 0;
+  }
+
+  return Number.isInteger(amount) ? amount : Math.round(amount * 10) / 10;
+};
+
+const getCurrentMonthWeekIndex = () => {
+  const day = new Date().getDate();
+
+  if (day <= 7) {
+    return 0;
+  }
+
+  if (day <= 14) {
+    return 1;
+  }
+
+  if (day <= 21) {
+    return 2;
+  }
+
+  return 3;
+};
+
+const resolveWeekStatus = (
+  units,
+  targetUnits,
+  carryForwardAmount,
+  overAchievedAmount,
+  weekData,
+  weekIndex,
+  currentWeekIndex,
+) => {
+  if (weekData?.status) {
+    return {
+      status: weekData.status,
+      statusNote: null,
+      statusNoteColor: null,
+    };
+  }
+
+  const carryForward = formatWeekStatusAmount(carryForwardAmount);
+  const overAchieved = formatWeekStatusAmount(overAchievedAmount);
+  const isDone = targetUnits > 0 && units >= targetUnits;
 
   if (carryForward > 0) {
-    return `${carryForward} CF`;
+    return {
+      status: `${carryForward} CF`,
+      statusNote: null,
+      statusNoteColor: null,
+    };
   }
 
-  if (units >= targetUnits && units > 0) {
-    return Strings.done;
+  if (isDone) {
+    return {
+      status: Strings.done,
+      statusNote: overAchieved > 0 ? `${overAchieved} MV` : null,
+      statusNoteColor: overAchieved > 0 ? Colors.brightBlue : null,
+    };
   }
 
-  if (units > 0) {
-    return 'Active';
+  if (overAchieved > 0) {
+    return {
+      status: `${overAchieved} MV`,
+      statusNote: null,
+      statusNoteColor: null,
+    };
   }
 
-  return Strings.next;
+  if (weekIndex === currentWeekIndex) {
+    return {
+      status: 'Active',
+      statusNote: null,
+      statusNoteColor: null,
+    };
+  }
+
+  return {
+    status: Strings.next,
+    statusNote: null,
+    statusNoteColor: null,
+  };
 };
 
 const buildWeeklyPerformanceItem = (
@@ -181,25 +270,42 @@ const buildWeeklyPerformanceItem = (
   targetUnits,
   weekData,
   totalTarget = 0,
-  carryForward = 0,
+  carryForwardAmount = 0,
+  overAchievedAmount = 0,
+  currentWeekIndex = getCurrentMonthWeekIndex(),
 ) => {
   const rawPercent = Number(
     weekData?.percentage ??
       weekData?.achievement_percentage ??
       weekData?.percent ??
-      (totalTarget ? Math.round((units / totalTarget) * 100) : 0),
+      (targetUnits ? Math.round((units / targetUnits) * 100) : 0),
   );
-  const percent = Math.min(100, Math.max(0, rawPercent));
+  let percent = Math.min(100, Math.max(0, rawPercent));
+
+  if (targetUnits > 0 && units >= targetUnits) {
+    percent = 100;
+  }
+
   const progress = Math.min(1, Math.max(0, percent / 100));
-  const status = resolveWeekStatus(units, targetUnits, carryForward, weekData);
+  const statusDetails = resolveWeekStatus(
+    units,
+    targetUnits,
+    carryForwardAmount,
+    overAchievedAmount,
+    weekData,
+    index,
+    currentWeekIndex,
+  );
 
   return {
     week: WEEK_SHORT_LABELS[index],
     progress,
     percent,
     units,
-    status,
-    statusColor: getStatusColor(status),
+    status: statusDetails.status,
+    statusNote: statusDetails.statusNote,
+    statusNoteColor: statusDetails.statusNoteColor,
+    statusColor: getStatusColor(statusDetails.status),
   };
 };
 
@@ -233,6 +339,8 @@ const distributeAchievedAcrossWeeks = (totalAchieved, weeklyTargets, totalTarget
       null,
       totalTarget,
       0,
+      0,
+      getCurrentMonthWeekIndex(),
     );
   });
 };
@@ -257,15 +365,15 @@ const mapWeeklyPerformance = (
   totalAchieved = 0,
   weeklyOverAchieved = {},
   totalTarget = 0,
+  weeklyCarryForward = {},
 ) => {
+  const currentWeekIndex = getCurrentMonthWeekIndex();
   const weeklyItems = WEEK_KEYS.map((key, index) => {
     const weekData = getWeekPerformanceData(weeklyPerformance, key, index);
     const targetUnits = getWeekTargetUnits(weeklyTargets, key, index);
     const units = getWeekAchievedUnits(weekData);
-    const carryForward =
-      index > 0
-        ? getWeekOverAchieved(weeklyOverAchieved, WEEK_KEYS[index - 1], index - 1)
-        : 0;
+    const carryForwardAmount = getWeekCarryForward(weeklyCarryForward, key, index);
+    const overAchievedAmount = getWeekOverAchieved(weeklyOverAchieved, key, index);
 
     return buildWeeklyPerformanceItem(
       index,
@@ -273,7 +381,9 @@ const mapWeeklyPerformance = (
       targetUnits,
       weekData,
       totalTarget,
-      carryForward,
+      carryForwardAmount,
+      overAchievedAmount,
+      currentWeekIndex,
     );
   });
 
@@ -459,6 +569,8 @@ export const mapBranchManagerCategoryPerformance = items => {
       {};
     const weeklyOverAchieved =
       item?.weekly_over_achieved ?? item?.weeklyOverAchieved ?? {};
+    const weeklyCarryForward =
+      item?.weekly_carry_forward ?? item?.weeklyCarryForward ?? {};
     const target = Number(item?.target ?? 0);
     const achieved = Number(item?.achieved ?? 0);
 
@@ -479,6 +591,7 @@ export const mapBranchManagerCategoryPerformance = items => {
         achieved,
         weeklyOverAchieved,
         target,
+        weeklyCarryForward,
       ),
       sortOrder: CATEGORY_ORDER.indexOf(categoryKey),
     };

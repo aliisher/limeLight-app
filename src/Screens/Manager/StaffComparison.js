@@ -156,7 +156,7 @@ const StaffComparison = props => {
         keyboardShouldPersistTaps="handled">
         <MainHeaderComponent
           title={title}
-          notificationCount={params?.notificationCount ?? 5}
+          showNotification
         />
 
         <StaffComparisonTabs

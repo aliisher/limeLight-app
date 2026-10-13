@@ -1,5 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { ScrollView, StatusBar, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
 import ASMAchievementCard from '../../Components/ASMAchievementCard';
 import ASMRangeToggle from '../../Components/ASMRangeToggle';
@@ -172,15 +173,19 @@ const Comparison = props => {
   );
 
   return (
-    <View style={MyStyling.container2}>
-      <StatusBar barStyle="dark-content" backgroundColor={Colors.white} />
+    <SafeAreaView style={MyStyling.container2} edges={['top']}>
+      <StatusBar
+        barStyle="dark-content"
+        backgroundColor={Colors.white}
+        translucent={false}
+      />
       <ScrollView
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
         <MainHeaderComponent
           title={params?.title ?? Strings.comparison}
-          notificationCount={params?.notificationCount ?? 5}
+          showNotification
         />
 
         {isLoading ? (
@@ -224,7 +229,7 @@ const Comparison = props => {
           </>
         )}
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 };
 

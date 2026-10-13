@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useCallback, useState } from 'react';
 
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 
 import DrawerMenuButton from './DrawerMenuButton';
 import UserAvatarImage from './UserAvatarImage';
@@ -29,13 +29,40 @@ import {
   navigateToProfile,
 } from '../Navigations/navigationHelpers';
 import { useSelector } from 'react-redux';
-
-const NOTIFICATION_COUNT = 5;
+import Api from '../Services/Api_services';
+import {
+  getUnreadNotificationCount,
+  mapNotifications,
+} from '../Utils/notificationMappers';
 
 const HomeHeaderComponent = ({ userName }) => {
   const navigation = useNavigation();
   const userData = useSelector(state => state?.AUTH?.userData);
   const { role } = useRole();
+  const [notificationCount, setNotificationCount] = useState(0);
+
+  const fetchUnreadCount = useCallback(async () => {
+    try {
+      const res = await Api.getNotifications();
+      const resJson = res?.data ?? {};
+
+      if (res?.status == 200) {
+        const mapped = mapNotifications(resJson?.data ?? resJson);
+        setNotificationCount(getUnreadNotificationCount(mapped));
+      }
+    } catch (error) {
+      console.log(
+        'Home notification count error:',
+        error?.response?.data ?? error?.message ?? error,
+      );
+    }
+  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchUnreadCount();
+    }, [fetchUnreadCount]),
+  );
 
   return (
     <View style={styles.header}>
@@ -62,9 +89,9 @@ const HomeHeaderComponent = ({ userName }) => {
             style={styles.bellIcon}
           />
 
-          {NOTIFICATION_COUNT > 0 && (
+          {notificationCount > 0 && (
             <View style={styles.badge}>
-              <Text style={styles.badgeText}>{NOTIFICATION_COUNT}</Text>
+              <Text style={styles.badgeText}>{notificationCount}</Text>
             </View>
           )}
         </TouchableOpacity>

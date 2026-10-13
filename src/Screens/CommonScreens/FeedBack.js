@@ -201,7 +201,7 @@ const FeedBack = () => {
       >
         <MainHeaderComponent
           title={Strings.feedbackHeader}
-          notificationCount={5}
+          showNotification
         />
 
         <Text style={styles.heading} numberOfLines={1}>

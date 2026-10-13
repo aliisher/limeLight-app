@@ -85,7 +85,7 @@ const BranchTargets = () => {
       <View style={styles.content}>
         <MainHeaderComponent
           title={Strings.branchTargets}
-          notificationCount={5}
+          showNotification
         />
 
         {isLoading ? (

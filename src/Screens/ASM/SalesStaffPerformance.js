@@ -22,7 +22,7 @@ const SalesStaffPerformance = props => {
       >
         <MainHeaderComponent
           title={params?.title ?? Strings.salesStaffPerformance}
-          notificationCount={params?.notificationCount ?? 5}
+          showNotification
         />
         <StaffPerformanceCard
           topPerformer={topPerformer}

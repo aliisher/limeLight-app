@@ -150,7 +150,7 @@ const RegionComparison = props => {
           <>
             <MainHeaderComponent
               title={params?.title ?? Strings.regionComparison}
-              notificationCount={params?.notificationCount ?? 5}
+              showNotification
             />
 
             <ASMRangeToggle

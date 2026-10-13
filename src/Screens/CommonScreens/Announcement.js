@@ -112,7 +112,7 @@ const Announcement = () => {
           <View>
             <MainHeaderComponent
               title={Strings.announcementHeader}
-              notificationCount={5}
+              showNotification
             />
             <AnnouncementFilterBar
               selectedFilter={selectedFilter}

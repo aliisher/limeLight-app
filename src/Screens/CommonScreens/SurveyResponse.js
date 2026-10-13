@@ -150,7 +150,7 @@ const SurveyResponse = () => {
       <View style={MyStyling.container2}>
         <StatusBar barStyle="dark-content" backgroundColor={Colors.white} />
         <View style={styles.headerWrap}>
-          <MainHeaderComponent title={'Survey Response'} notificationCount={5} />
+          <MainHeaderComponent title={'Survey Response'} showNotification />
         </View>
         <ResponseComponent
           totalStaff={summary.totalStaff}

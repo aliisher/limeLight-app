@@ -99,7 +99,7 @@ const BranchStaffComparison = props => {
       <View style={styles.content}>
         <MainHeaderComponent
           title={params?.title ?? Strings.staffComparisonHeader}
-          notificationCount={params?.notificationCount ?? 5}
+          showNotification
         />
 
         {isLoading ? (

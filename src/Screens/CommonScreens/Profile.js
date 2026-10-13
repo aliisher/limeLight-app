@@ -394,7 +394,7 @@ const Profile = () => {
       <View style={styles.headerWrap}>
         <MainHeaderComponent
           title={Strings.profileHeader}
-          notificationCount={5}
+          showNotification
         />
       </View>
 

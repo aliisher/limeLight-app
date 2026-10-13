@@ -240,7 +240,7 @@ const TargetAssignment = () => {
       <View style={styles.headerWrap}>
         <MainHeaderComponent
           title={Strings.TargetAssignment}
-          notificationCount={5}
+          showNotification
         />
       </View>
 

@@ -259,7 +259,7 @@ const SurveyProgress = () => {
         showsVerticalScrollIndicator={false}>
         <MainHeaderComponent
           title={Strings.surveyHeader}
-          notificationCount={5}
+          showNotification
         />
 
         {isLoading ? (

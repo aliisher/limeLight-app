@@ -246,7 +246,7 @@ const SurveyReport = () => {
       <StatusBar barStyle="dark-content" backgroundColor={Colors.white} />
 
       <View style={styles.headerWrap}>
-        <MainHeaderComponent title="Survey Report" notificationCount={5} />
+        <MainHeaderComponent title="Survey Report" showNotification />
       </View>
 
       {isLoading && !reportData ? (

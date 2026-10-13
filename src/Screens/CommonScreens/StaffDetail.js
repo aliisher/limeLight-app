@@ -128,7 +128,7 @@ const StaffDetail = ({ route }) => {
       <View style={styles.headerWrap}>
         <MainHeaderComponent
           title={Strings.staffDetailsHeader}
-          notificationCount={5}
+          showNotification
         />
       </View>
 

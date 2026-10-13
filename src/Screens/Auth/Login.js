@@ -23,6 +23,7 @@ import {
   navigateAfterLogin,
   resetToRoute,
 } from '../../Navigations/navigationHelpers';
+import { requestNotificationPermissionAndGetFcmToken } from '../../Utils/fcmHelpers';
 
 const Login = () => {
   const navigation = useNavigation();
@@ -30,6 +31,7 @@ const Login = () => {
   const { role, setRole } = useRole();
 
   const [form, setForm] = useState({ email: '', password: '' });
+  const [fcmToken, setFcmToken] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState({
     emailError: '',
@@ -38,11 +40,31 @@ const Login = () => {
 
   useFocusEffect(
     useCallback(() => {
-      if (!role) {
-        resetToRoute(navigation, 'Role');
-      } else {
-        setError({ emailError: '', passwordError: '' });
-      }
+      let cancelled = false;
+
+      const prepareFcm = async () => {
+        const token = await requestNotificationPermissionAndGetFcmToken();
+
+        if (cancelled) {
+          return;
+        }
+
+        if (token) {
+          setFcmToken(token);
+        }
+
+        if (!role) {
+          resetToRoute(navigation, 'Role');
+        } else {
+          setError({ emailError: '', passwordError: '' });
+        }
+      };
+
+      prepareFcm();
+
+      return () => {
+        cancelled = true;
+      };
     }, [role, navigation]),
   );
 
@@ -81,10 +103,24 @@ const Login = () => {
       setError({ emailError: '', passwordError: '' });
       setIsLoading(true);
 
+      let resolvedFcmToken = fcmToken;
+
+      if (!resolvedFcmToken) {
+        resolvedFcmToken =
+          (await requestNotificationPermissionAndGetFcmToken()) ?? '';
+        if (resolvedFcmToken) {
+          setFcmToken(resolvedFcmToken);
+        }
+      }
+
       const formData = new FormData();
       formData.append('type', role);
       formData.append('login', form.email.trim());
       formData.append('password', form.password);
+
+      if (resolvedFcmToken) {
+        formData.append('fcm_token', resolvedFcmToken);
+      }
 
       try {
         const res = await Api.login(formData);
