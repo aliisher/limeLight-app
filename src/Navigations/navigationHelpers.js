@@ -2,20 +2,16 @@ import { createNavigationContainerRef } from '@react-navigation/native';
 import Toast from 'react-native-simple-toast';
 import { Strings } from '../Constants/Strings';
 import { store } from '../Redux/Store';
+import {
+  getNotificationMessageKey,
+  getNotificationNavigationParams,
+} from '../Utils/fcmNavigation';
 
 export const navigationRef = createNavigationContainerRef();
 
-export const NOTIFICATION_SCREEN_PARAMS = {
-  screen: 'BottomNavigation',
-  params: {
-    screen: 'BottomNavigation',
-    params: {
-      screen: 'Notification',
-    },
-  },
-};
-
-let pendingNotificationOpen = false;
+let pendingNotificationParams = null;
+let pendingNotificationKey = '';
+let lastHandledNotificationKey = '';
 
 const canOpenNotificationScreen = () => {
   const state = store.getState();
@@ -25,18 +21,82 @@ const canOpenNotificationScreen = () => {
   return Boolean(token && role);
 };
 
-export const markNotificationOpenPending = () => {
-  pendingNotificationOpen = true;
+const isStartupRoute = () => {
+  if (!navigationRef.isReady()) {
+    return true;
+  }
+
+  const root = navigationRef.getRootState();
+  const routeName = root?.routes?.[root.index ?? 0]?.name;
+
+  return (
+    routeName === 'SplashScreen' ||
+    routeName === 'Role' ||
+    routeName === 'AuthNavigation'
+  );
 };
 
-export const openNotificationScreen = () => {
-  if (!pendingNotificationOpen || !canOpenNotificationScreen() || !navigationRef.isReady()) {
+export const queueNotificationOpen = remoteMessage => {
+  const params = getNotificationNavigationParams(remoteMessage);
+
+  if (!params) {
     return false;
   }
 
-  pendingNotificationOpen = false;
-  navigationRef.navigate('Drawer', NOTIFICATION_SCREEN_PARAMS);
+  const key = getNotificationMessageKey(remoteMessage);
+
+  if (key && key === lastHandledNotificationKey) {
+    return false;
+  }
+
+  pendingNotificationParams = params;
+  pendingNotificationKey = key;
+
+  if (isStartupRoute()) {
+    return false;
+  }
+
+  return flushNotificationOpen();
+};
+
+export const flushNotificationOpen = () => {
+  if (
+    !pendingNotificationParams ||
+    !canOpenNotificationScreen() ||
+    !navigationRef.isReady() ||
+    isStartupRoute()
+  ) {
+    return false;
+  }
+
+  const params = pendingNotificationParams;
+  lastHandledNotificationKey = pendingNotificationKey;
+  pendingNotificationParams = null;
+  pendingNotificationKey = '';
+  navigationRef.navigate('Drawer', params);
   return true;
+};
+
+export const takeLaunchNotificationParams = remoteMessage => {
+  const fromMessage = getNotificationNavigationParams(remoteMessage);
+  const params = pendingNotificationParams || fromMessage;
+
+  if (!params) {
+    return null;
+  }
+
+  const key = pendingNotificationKey || getNotificationMessageKey(remoteMessage);
+
+  if (key && key === lastHandledNotificationKey) {
+    pendingNotificationParams = null;
+    pendingNotificationKey = '';
+    return null;
+  }
+
+  lastHandledNotificationKey = key;
+  pendingNotificationParams = null;
+  pendingNotificationKey = '';
+  return params;
 };
 import {
   getLastSelectedStaffMember,

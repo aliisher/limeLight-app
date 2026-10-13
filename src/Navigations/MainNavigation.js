@@ -15,17 +15,16 @@ import BranchTargets from '../Screens/AppFlow/BranchTargets';
 import BranchStaffComparison from '../Screens/AppFlow/BranchStaffComparison';
 import SurveyResponse from '../Screens/CommonScreens/SurveyResponse';
 import {
-  markNotificationOpenPending,
+  flushNotificationOpen,
   navigationRef,
-  openNotificationScreen,
+  queueNotificationOpen,
 } from './navigationHelpers';
 const MAIN_STACK = createNativeStackNavigator();
 
 const MainNavigation = () => {
   useEffect(() => {
-    const unsubscribe = onNotificationOpenedApp(getMessaging(), () => {
-      markNotificationOpenPending();
-      openNotificationScreen();
+    const unsubscribe = onNotificationOpenedApp(getMessaging(), remoteMessage => {
+      queueNotificationOpen(remoteMessage);
     });
 
     return unsubscribe;
@@ -35,7 +34,7 @@ const MainNavigation = () => {
     <NavigationContainer
       ref={navigationRef}
       onReady={() => {
-        openNotificationScreen();
+        flushNotificationOpen();
       }}
     >
       <MAIN_STACK.Navigator

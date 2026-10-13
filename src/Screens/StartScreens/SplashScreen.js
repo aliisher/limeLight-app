@@ -7,7 +7,7 @@ import {
 } from '@react-native-firebase/messaging';
 import SplashView from '../../Components/SplashView';
 import { setAuthToken } from '../../Services/Api_services';
-import { NOTIFICATION_SCREEN_PARAMS } from '../../Navigations/navigationHelpers';
+import { takeLaunchNotificationParams } from '../../Navigations/navigationHelpers';
 
 const SplashScreen = () => {
   const navigation = useNavigation();
@@ -27,17 +27,15 @@ const SplashScreen = () => {
     );
 
     const timer = setTimeout(async () => {
-      const openedFromNotification = Boolean(await initialNotification);
+      const remoteMessage = await initialNotification;
+      const notificationParams = takeLaunchNotificationParams(remoteMessage);
 
       if (cancelled) {
         return;
       }
 
       if (token && role) {
-        navigation.replace(
-          'Drawer',
-          openedFromNotification ? NOTIFICATION_SCREEN_PARAMS : undefined,
-        );
+        navigation.replace('Drawer', notificationParams || undefined);
         return;
       }
 
