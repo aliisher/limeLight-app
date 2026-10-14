@@ -228,7 +228,8 @@ const styles = StyleSheet.create({
     fontFamily: Fonts.poppinsBold,
     fontSize: Fontsize.xm2,
     color: Colors.white,
-    textAlign: 'center',
+    textAlign: 'left',
+    marginLeft:wp(1),
   },
   remainingTextContainer: {
     position: 'absolute',

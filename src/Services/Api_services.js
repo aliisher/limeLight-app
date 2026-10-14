@@ -181,6 +181,7 @@ const Api = {
   getAsmStaffComparison: type =>
     requests.get(`asm-staff-comparison?type=${type}`),
   getNotifications: () => requests.get('notifications'),
+  markNotificationRead: id => requests.post(`notifications/${id}/read`, {}),
   getSalesStaffComparison: type =>
     requests.get(`sales-staff-comparison?type=${type}`),
   getAsmBranchTargets: () => requests.get('asm-branch-targets'),

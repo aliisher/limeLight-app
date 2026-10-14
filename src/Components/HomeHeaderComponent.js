@@ -3,6 +3,7 @@ import React, { useCallback, useState } from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import DrawerMenuButton from './DrawerMenuButton';
 import UserAvatarImage from './UserAvatarImage';
@@ -37,6 +38,7 @@ import {
 
 const HomeHeaderComponent = ({ userName }) => {
   const navigation = useNavigation();
+  const insets = useSafeAreaInsets();
   const userData = useSelector(state => state?.AUTH?.userData);
   const { role } = useRole();
   const [notificationCount, setNotificationCount] = useState(0);
@@ -65,7 +67,7 @@ const HomeHeaderComponent = ({ userName }) => {
   );
 
   return (
-    <View style={styles.header}>
+    <View style={[styles.header, { paddingTop: hp(3) + insets.top }]}>
       <DrawerMenuButton iconColor={Colors.white} style={styles.menuBtn} />
 
       <View style={styles.userInfo}>

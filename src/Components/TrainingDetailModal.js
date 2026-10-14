@@ -8,6 +8,7 @@ import {
   View,
 } from 'react-native';
 import Modal from 'react-native-modal';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Feather from 'react-native-vector-icons/Feather';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { hp, wp } from '../Assets/Responsive';
@@ -56,6 +57,7 @@ const ModalProductVisual = ({ product }) => {
 };
 
 const TrainingDetailModal = ({ visible, product, onClose, onMarkCompleted }) => {
+  const insets = useSafeAreaInsets();
   if (!product) {
     return null;
   }
@@ -90,7 +92,7 @@ const TrainingDetailModal = ({ visible, product, onClose, onMarkCompleted }) => 
       useNativeDriver
       hideModalContentWhileAnimating
     >
-      <View style={styles.modalCard}>
+      <View style={[styles.modalCard, { paddingBottom: hp(3) + insets.bottom }]}>
         <View style={styles.modalHandle} />
 
         <View style={styles.modalHeader}>

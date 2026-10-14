@@ -7,6 +7,7 @@ import {
   View,
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useSelector } from 'react-redux';
 import { hp, wp } from '../../Assets/Responsive';
 import { Colors } from '../../Constants/Colors';
@@ -31,6 +32,7 @@ import {
 import { mapStaffDetails } from '../../Utils/staffMappers';
 
 const StaffDetail = ({ route }) => {
+  const insets = useSafeAreaInsets();
   const { role } = useRole();
   const userData = useSelector(state => state.AUTH?.userData);
   const staffId = resolveStaffId(route?.params, userData, role);
@@ -139,7 +141,11 @@ const StaffDetail = ({ route }) => {
       ) : isLoading ? (
         <ScreenLoader />
       ) : (
-        <ScrollView contentContainerStyle={styles.content}>
+        <ScrollView
+          contentContainerStyle={[
+            styles.content,
+            { paddingBottom: hp(3) + insets.bottom },
+          ]}>
           <StaffDetailResourceCard profile={profile} />
 
           <View style={styles.sectionHeader}>

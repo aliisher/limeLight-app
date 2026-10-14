@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import {
   FlatList,
   RefreshControl,
@@ -7,7 +7,6 @@ import {
   Text,
   View,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import NotificationCard from '../../Components/NotificationCard';
 import MainHeaderComponent from '../../Components/MainHeaderComponent';
@@ -35,8 +34,46 @@ const Notification = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [hasError, setHasError] = useState(false);
+  const [badgeRefreshKey, setBadgeRefreshKey] = useState(0);
+  const markingIdsRef = useRef(new Set());
 
   const unreadCount = getUnreadNotificationCount(notifications);
+
+  const markNotificationRead = useCallback(async item => {
+    const id = item?.id;
+    const notificationId = id == null ? '' : String(id);
+
+    if (
+      !item ||
+      item.isRead ||
+      !notificationId ||
+      notificationId.startsWith('notification-') ||
+      markingIdsRef.current.has(notificationId)
+    ) {
+      return;
+    }
+
+    markingIdsRef.current.add(notificationId);
+
+    try {
+      await Api.markNotificationRead(notificationId);
+      setNotifications(current =>
+        current.map(notification =>
+          String(notification.id) === notificationId
+            ? { ...notification, isRead: true }
+            : notification,
+        ),
+      );
+      setBadgeRefreshKey(key => key + 1);
+    } catch (error) {
+      console.log(
+        'Mark notification read error:',
+        error?.response?.data ?? error?.message ?? error,
+      );
+    } finally {
+      markingIdsRef.current.delete(notificationId);
+    }
+  }, []);
 
   const fetchNotifications = useCallback(async (options = {}) => {
     const { refreshing = false } = options;
@@ -83,6 +120,8 @@ const Notification = () => {
   };
 
   const handleNotificationPress = item => {
+    markNotificationRead(item);
+
     if (item?.category === 'Surveys' || item?.icon === 'Survey') {
       navigateToSurveyTab(navigation);
       return;
@@ -103,7 +142,7 @@ const Notification = () => {
   const unreadLabel = `${unreadCount} Unread`;
 
   return (
-    <SafeAreaView style={MyStyling.container2} edges={['top']}>
+    <View style={MyStyling.container2}>
       <StatusBar
         barStyle="dark-content"
         backgroundColor={Colors.white}
@@ -131,6 +170,7 @@ const Notification = () => {
             <MainHeaderComponent
               title={Strings.notificationHeader}
               showNotification
+              unreadRefreshKey={badgeRefreshKey}
             />
             <View style={styles.sectionRow}>
               <Text style={styles.sectionTitle} numberOfLines={1}>
@@ -154,7 +194,7 @@ const Notification = () => {
           )
         }
       />
-    </SafeAreaView>
+    </View>
   );
 };
 

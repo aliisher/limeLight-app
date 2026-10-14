@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { ScrollView, StatusBar, StyleSheet, View } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useFocusEffect } from '@react-navigation/native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { hp, wp } from '../../Assets/Responsive';
 import MainHeaderComponent from '../../Components/MainHeaderComponent';
 import ScreenLoader from '../../Components/ScreenLoader';
@@ -31,6 +32,7 @@ const formatApiDate = date => {
 };
 
 const StaffComparison = props => {
+  const insets = useSafeAreaInsets();
   const params = props?.route?.params;
   const title = params?.title ?? props?.title ?? Strings.staffComparisonHeader;
 
@@ -152,7 +154,10 @@ const StaffComparison = props => {
       <StatusBar barStyle="dark-content" backgroundColor={Colors.white} />
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.container}
+        contentContainerStyle={[
+          styles.container,
+          { paddingBottom: hp(3) + insets.bottom },
+        ]}
         keyboardShouldPersistTaps="handled">
         <MainHeaderComponent
           title={title}

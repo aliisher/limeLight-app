@@ -7,7 +7,7 @@ import {
   View,
 } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Toast from 'react-native-simple-toast';
 
 import { MyStyling } from '../../Constants/Styling';
@@ -39,6 +39,7 @@ const BUTTONS_BOTTOM = 20;
 
 const TargetAssignment = () => {
   const navigation = useNavigation();
+  const insets = useSafeAreaInsets();
   const [keyboardHeight, setKeyboardHeight] = useState(0);
   const [staffRows, setStaffRows] = useState([]);
   const [categoryTargets, setCategoryTargets] = useState([]);
@@ -234,7 +235,7 @@ const TargetAssignment = () => {
   };
 
   return (
-    <SafeAreaView style={MyStyling.container2}>
+    <View style={MyStyling.container2}>
       <StatusBar barStyle="dark-content" backgroundColor={Colors.white} />
 
       <View style={styles.headerWrap}>
@@ -249,7 +250,10 @@ const TargetAssignment = () => {
       ) : (
         <ScrollView
           style={styles.scroll}
-          contentContainerStyle={styles.scrollContent}
+          contentContainerStyle={[
+            styles.scrollContent,
+            { paddingBottom: hp(14) + insets.bottom },
+          ]}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}>
           <MonthlyTargetCalculator summary={targetSummary} />
@@ -262,7 +266,10 @@ const TargetAssignment = () => {
       )}
 
       <View
-        style={[styles.bottomButtons, { bottom: BUTTONS_BOTTOM - keyboardHeight }]}>
+        style={[
+          styles.bottomButtons,
+          { bottom: BUTTONS_BOTTOM + insets.bottom - keyboardHeight },
+        ]}>
         <Btn
           title="↺ Reset"
           style={styles.resetBtn}
@@ -277,7 +284,7 @@ const TargetAssignment = () => {
           loading={isSaving}
         />
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 

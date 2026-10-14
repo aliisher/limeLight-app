@@ -8,6 +8,7 @@ import {
 import { Images } from '../../Assets';
 import Btn from '../../Components/Btn';
 import Customtextinput from '../../Components/Customtextinput';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import MainHeaderComponent from '../../Components/MainHeaderComponent';
 import ScreenScrollView from '../../Components/ScreenScrollView';
 import { hp, wp } from '../../Assets/Responsive';
@@ -23,6 +24,7 @@ import Toast from 'react-native-simple-toast';
 import Api from '../../Services/Api_services';
 
 const ForgotPassword = () => {
+  const insets = useSafeAreaInsets();
   const navigation = useNavigation();
   const role = useSelector(state => state?.ROLE?.userData);
   const [form, setForm] = useState({ email: '' });
@@ -89,7 +91,11 @@ const ForgotPassword = () => {
     <View style={MyStyling.container2}>
       <StatusBar barStyle="dark-content" backgroundColor={Colors.white} />
 
-      <ScreenScrollView contentContainerStyle={styles.content}>
+      <ScreenScrollView
+        contentContainerStyle={[
+          styles.content,
+          { paddingBottom: hp(4) + insets.bottom },
+        ]}>
         <MainHeaderComponent title={Strings.forgotPasswordHeader} />
 
         <Text style={styles.heading} numberOfLines={1}>{Strings.cannotLogin}</Text>

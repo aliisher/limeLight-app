@@ -144,7 +144,10 @@ const BranchManagerDrawerContent = ({ navigation }) => {
 
       <ScrollView
         style={styles.menuScroll}
-        contentContainerStyle={styles.menuContent}
+        contentContainerStyle={[
+          styles.menuContent,
+          { paddingBottom: hp(3) + insets.bottom },
+        ]}
         showsVerticalScrollIndicator={false}
       >
         <MenuItem

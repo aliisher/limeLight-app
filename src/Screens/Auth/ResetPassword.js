@@ -3,6 +3,7 @@ import { StatusBar, StyleSheet, Text, View } from 'react-native';
 import { Images } from '../../Assets';
 import Btn from '../../Components/Btn';
 import Customtextinput from '../../Components/Customtextinput';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import MainHeaderComponent from '../../Components/MainHeaderComponent';
 import ScreenScrollView from '../../Components/ScreenScrollView';
 import { hp, wp } from '../../Assets/Responsive';
@@ -22,6 +23,7 @@ import Toast from 'react-native-simple-toast';
 import Api from '../../Services/Api_services';
 
 const ResetPassword = () => {
+  const insets = useSafeAreaInsets();
   const navigation = useNavigation();
   const route = useRoute();
   const { login, type } = route.params || {};
@@ -137,7 +139,11 @@ const ResetPassword = () => {
     <View style={MyStyling.container2}>
       <StatusBar barStyle="dark-content" backgroundColor={Colors.white} />
 
-      <ScreenScrollView contentContainerStyle={styles.content}>
+      <ScreenScrollView
+        contentContainerStyle={[
+          styles.content,
+          { paddingBottom: hp(4) + insets.bottom },
+        ]}>
         <MainHeaderComponent title={Strings.createPasswordHeader} />
 
         <Text style={styles.heading} numberOfLines={1}>

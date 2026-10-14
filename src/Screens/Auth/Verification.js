@@ -6,6 +6,7 @@ import {
   View,
 } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Toast from 'react-native-simple-toast';
 import Btn from '../../Components/Btn';
 import MainHeaderComponent from '../../Components/MainHeaderComponent';
@@ -22,6 +23,7 @@ import Api from '../../Services/Api_services';
 const RESEND_TIMER_SECONDS = 50;
 
 const Verification = () => {
+  const insets = useSafeAreaInsets();
   const navigation = useNavigation();
   const route = useRoute();
   const { login, type } = route.params || {};
@@ -160,7 +162,11 @@ const Verification = () => {
     <View style={styles.screen}>
       <StatusBar barStyle="dark-content" backgroundColor={Colors.white} />
 
-      <ScreenScrollView contentContainerStyle={styles.scrollContent}>
+      <ScreenScrollView
+        contentContainerStyle={[
+          styles.scrollContent,
+          { paddingBottom: hp(4) + insets.bottom },
+        ]}>
         <MainHeaderComponent title={Strings.verificationHeader} />
 
       <Text style={styles.heading} numberOfLines={1}>

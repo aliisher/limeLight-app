@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import { FlatList, StatusBar, StyleSheet, View } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import MainHeaderComponent from '../../Components/MainHeaderComponent';
 import BranchStaffComparisonCard from '../../Components/BranchStaffComparisonCard';
@@ -21,6 +21,7 @@ import { navigateToStaffDetail } from '../../Navigations/navigationHelpers';
 const getRangeType = tab => (tab === Strings.weekly ? 'weekly' : 'monthly');
 
 const BranchStaffComparison = props => {
+  const insets = useSafeAreaInsets();
   const params = props?.route?.params;
 
   const [branchData, setBranchData] = useState([]);
@@ -93,7 +94,7 @@ const BranchStaffComparison = props => {
   );
 
   return (
-    <SafeAreaView style={MyStyling.container2} edges={['top']}>
+    <View style={MyStyling.container2}>
       <StatusBar barStyle="dark-content" backgroundColor={Colors.lightGrey} />
 
       <View style={styles.content}>
@@ -119,11 +120,14 @@ const BranchStaffComparison = props => {
               />
             }
             showsVerticalScrollIndicator={false}
-            contentContainerStyle={styles.list}
+            contentContainerStyle={[
+              styles.list,
+              { paddingBottom: wp(1) + insets.bottom },
+            ]}
           />
         )}
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 

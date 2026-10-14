@@ -12,6 +12,7 @@ import { isValidLogin } from '../../Constants/Regex';
 import { Strings } from '../../Constants/Strings';
 import { MyStyling } from '../../Constants/Styling';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useDispatch } from 'react-redux';
 import Toast from 'react-native-simple-toast';
 import { useRole } from '../../Context/RoleContext';
@@ -26,6 +27,7 @@ import {
 import { requestNotificationPermissionAndGetFcmToken } from '../../Utils/fcmHelpers';
 
 const Login = () => {
+  const insets = useSafeAreaInsets();
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const { role, setRole } = useRole();
@@ -202,7 +204,13 @@ const Login = () => {
   return (
     <ScreenScrollView
       style={MyStyling.container1}
-      contentContainerStyle={styles.content}
+      contentContainerStyle={[
+        styles.content,
+        {
+          paddingTop: hp(8) + insets.top,
+          paddingBottom: hp(6) + insets.bottom,
+        },
+      ]}
       backgroundColor={Colors.mint}>
       <StatusBar barStyle="dark-content" backgroundColor={Colors.mint} />
 

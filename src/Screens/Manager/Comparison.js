@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import { ScrollView, StatusBar, StyleSheet, Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import ASMAchievementCard from '../../Components/ASMAchievementCard';
 import ASMRangeToggle from '../../Components/ASMRangeToggle';
 import BranchStaffComparisonTable from '../../Components/BranchStaffComparisonTable';
@@ -50,6 +50,7 @@ const getRangeType = range => (range === Strings.weekly ? 'weekly' : 'monthly');
 
 const Comparison = props => {
   const params = props?.route?.params;
+  const insets = useSafeAreaInsets();
   const [selectedRange, setSelectedRange] = useState(
     params?.selectedRange ?? Strings.weekly,
   );
@@ -173,14 +174,17 @@ const Comparison = props => {
   );
 
   return (
-    <SafeAreaView style={MyStyling.container2} edges={['top']}>
+    <View style={MyStyling.container2}>
       <StatusBar
         barStyle="dark-content"
         backgroundColor={Colors.white}
         translucent={false}
       />
       <ScrollView
-        contentContainerStyle={styles.content}
+        contentContainerStyle={[
+          styles.content,
+          { paddingBottom: hp(3) + insets.bottom },
+        ]}
         showsVerticalScrollIndicator={false}
       >
         <MainHeaderComponent
@@ -229,7 +233,7 @@ const Comparison = props => {
           </>
         )}
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 

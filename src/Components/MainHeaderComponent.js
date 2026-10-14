@@ -1,6 +1,7 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Images } from '../Assets';
 import { hp, wp } from '../Assets/Responsive';
 import { Colors } from '../Constants/Colors';
@@ -15,6 +16,7 @@ import {
 
 const MainHeaderComponent = props => {
   const navigation = useNavigation();
+  const insets = useSafeAreaInsets();
   const showNotification =
     props.showNotification || props.notificationCount != null;
   const [notificationCount, setNotificationCount] = useState(0);
@@ -36,6 +38,9 @@ const MainHeaderComponent = props => {
     }
   }, []);
 
+  const unreadRefreshKey = props.unreadRefreshKey;
+  const lastUnreadRefreshKey = useRef(unreadRefreshKey);
+
   useFocusEffect(
     useCallback(() => {
       if (!showNotification) {
@@ -46,8 +51,21 @@ const MainHeaderComponent = props => {
     }, [fetchUnreadCount, showNotification]),
   );
 
+  useEffect(() => {
+    if (!showNotification || unreadRefreshKey == null) {
+      return;
+    }
+
+    if (unreadRefreshKey === lastUnreadRefreshKey.current) {
+      return;
+    }
+
+    lastUnreadRefreshKey.current = unreadRefreshKey;
+    fetchUnreadCount();
+  }, [fetchUnreadCount, showNotification, unreadRefreshKey]);
+
   return (
-    <View style={[styles.header, props.style]}>
+    <View style={[styles.header, props.style, { paddingTop: insets.top }]}>
       <TouchableOpacity
         style={styles.backBtn}
         onPress={() => navigation.goBack()}

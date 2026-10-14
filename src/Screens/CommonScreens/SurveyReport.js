@@ -1,6 +1,5 @@
 import React, { useCallback, useRef, useState } from 'react';
 import { ScrollView, StatusBar, StyleSheet, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect, useRoute } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
 import MainHeaderComponent from '../../Components/MainHeaderComponent';
@@ -242,7 +241,7 @@ const SurveyReport = () => {
     reportData?.surveyId ?? route.params?.surveyId ?? activeSurveyId ?? null;
 
   return (
-    <SafeAreaView style={MyStyling.container2} edges={['top']}>
+    <View style={MyStyling.container2}>
       <StatusBar barStyle="dark-content" backgroundColor={Colors.white} />
 
       <View style={styles.headerWrap}>
@@ -283,7 +282,7 @@ const SurveyReport = () => {
           />
         </ScrollView>
       )}
-    </SafeAreaView>
+    </View>
   );
 };
 

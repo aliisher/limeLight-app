@@ -1,6 +1,7 @@
 import React from 'react';
 import { StatusBar, StyleSheet, Text, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Images } from '../../Assets';
 import { hp, wp } from '../../Assets/Responsive';
 import { Colors } from '../../Constants/Colors';
@@ -14,6 +15,7 @@ import { MyStyling } from '../../Constants/Styling';
 import { useRole } from '../../Context/RoleContext';
 
 const Role = () => {
+  const insets = useSafeAreaInsets();
   const navigation = useNavigation();
   const { setRole } = useRole();
 
@@ -24,8 +26,11 @@ const Role = () => {
 
   return (
     <ScreenScrollView
-      style={MyStyling.container}
-      contentContainerStyle={styles.scrollContent}
+      style={[MyStyling.container, { paddingTop: hp(8) + insets.top }]}
+      contentContainerStyle={[
+        styles.scrollContent,
+        { paddingBottom: hp(4) + insets.bottom },
+      ]}
       backgroundColor={Colors.mint}>
       <StatusBar barStyle="dark-content" backgroundColor={Colors.mint} />
       <Text style={styles.title} numberOfLines={1}>{Strings.chooseYourRole}</Text>

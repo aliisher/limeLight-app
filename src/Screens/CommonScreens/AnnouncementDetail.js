@@ -1,5 +1,6 @@
 import React from 'react';
 import { ScrollView, StatusBar, StyleSheet, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/Feather';
 import MainHeaderComponent from '../../Components/MainHeaderComponent';
 import { hp, wp } from '../../Assets/Responsive';
@@ -10,6 +11,7 @@ import { Strings } from '../../Constants/Strings';
 import { MyStyling } from '../../Constants/Styling';
 
 const AnnouncementDetail = props => {
+  const insets = useSafeAreaInsets();
   const item = props?.route?.params?.item;
 
   return (
@@ -18,7 +20,10 @@ const AnnouncementDetail = props => {
 
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.content}
+        contentContainerStyle={[
+          styles.content,
+          { paddingBottom: hp(4) + insets.bottom },
+        ]}
       >
         <MainHeaderComponent title={Strings.announcementHeader} />
 

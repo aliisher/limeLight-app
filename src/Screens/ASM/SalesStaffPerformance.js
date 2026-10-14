@@ -1,5 +1,6 @@
 import React from 'react';
 import { ScrollView, StatusBar, StyleSheet, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import MainHeaderComponent from '../../Components/MainHeaderComponent';
 import StaffPerformanceCard from '../../Components/StaffPerformanceCard';
 import { hp, wp } from '../../Assets/Responsive';
@@ -9,6 +10,7 @@ import { MyStyling } from '../../Constants/Styling';
 import { Colors } from '../../Constants/Colors';
 
 const SalesStaffPerformance = props => {
+  const insets = useSafeAreaInsets();
   const params = props?.route?.params;
   const rankData = params?.rankData ?? staffComparisonRankData;
   const topPerformer = params?.topPerformer ?? rankData?.[1];
@@ -18,7 +20,10 @@ const SalesStaffPerformance = props => {
       <StatusBar barStyle="dark-content" backgroundColor={Colors.white} />
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.container}
+        contentContainerStyle={[
+          styles.container,
+          { paddingBottom: hp(3) + insets.bottom },
+        ]}
       >
         <MainHeaderComponent
           title={params?.title ?? Strings.salesStaffPerformance}

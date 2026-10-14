@@ -8,6 +8,7 @@ import {
   View,
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
 import { launchImageLibrary } from 'react-native-image-picker';
 import Toast from 'react-native-simple-toast';
@@ -79,6 +80,7 @@ const requestGalleryPermission = async () => {
 };
 
 const Profile = () => {
+  const insets = useSafeAreaInsets();
   const dispatch = useDispatch();
   const { role } = useRole();
   const userData = useSelector(state => state?.AUTH?.userData);
@@ -403,7 +405,10 @@ const Profile = () => {
       ) : (
         <ScrollView
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.content}
+          contentContainerStyle={[
+            styles.content,
+            { paddingBottom: hp(4) + insets.bottom },
+          ]}
         >
           <ProfileSummaryCard
             name={profile.name}

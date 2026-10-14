@@ -1,6 +1,7 @@
 import { StatusBar, StyleSheet, View } from 'react-native';
 import React, { useCallback, useRef, useState } from 'react';
 import { useFocusEffect, useRoute } from '@react-navigation/native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useSelector } from 'react-redux';
 import { MyStyling } from '../../Constants/Styling';
 import { Colors } from '../../Constants/Colors';
@@ -22,6 +23,7 @@ import {
 import { selectActiveSurveyId } from '../../Redux/Slices/SurveySlice';
 
 const SurveyResponse = () => {
+  const insets = useSafeAreaInsets();
   const route = useRoute();
   const { role } = useRole();
   const userData = useSelector(state => state?.AUTH?.userData);
@@ -147,7 +149,7 @@ const SurveyResponse = () => {
 
   return (
     <SurveyResponseProvider value={{ responses, isLoading }}>
-      <View style={MyStyling.container2}>
+      <View style={[MyStyling.container2, { paddingBottom: insets.bottom }]}>
         <StatusBar barStyle="dark-content" backgroundColor={Colors.white} />
         <View style={styles.headerWrap}>
           <MainHeaderComponent title={'Survey Response'} showNotification />

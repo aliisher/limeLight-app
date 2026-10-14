@@ -6,6 +6,7 @@ import {
   View,
 } from 'react-native';
 import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useDispatch } from 'react-redux';
 import Toast from 'react-native-simple-toast';
 import { Images } from '../../Assets';
@@ -53,6 +54,7 @@ const normalizeSelectedOption = option => {
 };
 
 const SurveyProgress = () => {
+  const insets = useSafeAreaInsets();
   const navigation = useNavigation();
   const route = useRoute();
   const dispatch = useDispatch();
@@ -288,7 +290,7 @@ const SurveyProgress = () => {
         )}
       </ScrollView>
 
-      <View style={styles.footer}>
+      <View style={[styles.footer, { paddingBottom: hp(3) + insets.bottom }]}>
         <Btn
           title={Strings.submitSurvey}
           icon={Images.SubmitArrow}

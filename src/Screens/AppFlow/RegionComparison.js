@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { StatusBar, StyleSheet, Text, View } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import ASMAchievementCard from '../../Components/ASMAchievementCard';
 import ASMConversionTable from '../../Components/ASMConversionTable';
 import ASMRangeToggle from '../../Components/ASMRangeToggle';
@@ -24,6 +25,7 @@ const EMPTY_YOURS_ROW = { rank: 0, name: '', achieved: 0, remaining: 0 };
 const getRangeType = range => (range === Strings.weekly ? 'weekly' : 'monthly');
 
 const RegionComparison = props => {
+  const insets = useSafeAreaInsets();
   const params = props?.route?.params;
 
   const [selectedRange, setSelectedRange] = useState(
@@ -145,7 +147,10 @@ const RegionComparison = props => {
         useRegionRow
         yoursRow={conversionYoursRow}
         isLoading={isConversionLoading}
-        contentContainerStyle={styles.content}
+        contentContainerStyle={[
+          styles.content,
+          { paddingBottom: hp(3) + insets.bottom },
+        ]}
         topContent={
           <>
             <MainHeaderComponent

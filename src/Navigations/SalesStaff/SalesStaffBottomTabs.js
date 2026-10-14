@@ -19,6 +19,7 @@ import Notification from '../../Screens/CommonScreens/Notification';
 import FeedBack from '../../Screens/CommonScreens/FeedBack';
 import SurveyStack from '../SurveyStack';
 import { Fontsize } from '../../Constants/Fontsize';
+import { useSafeBottomTabBarStyle } from '../safeTabBarStyle';
 
 const BOTTOM_STACK = createBottomTabNavigator();
 
@@ -148,7 +149,6 @@ const tabBarImageIcon =
 const bottomTabScreenOptions = {
   headerShown: false,
   tabBarShowLabel: false,
-  tabBarStyle: styles.tabBar,
   tabBarItemStyle: styles.tabBarItem,
   tabBarIconStyle: styles.tabBarIcon,
   tabBarPressColor: 'transparent',
@@ -157,10 +157,13 @@ const bottomTabScreenOptions = {
   tabBarButton: props => <TouchableOpacity {...props} activeOpacity={1} />,
 };
 
-const SalesStaffBottomTabs = () => (
+const SalesStaffBottomTabs = () => {
+  const tabBarStyle = useSafeBottomTabBarStyle(styles.tabBar);
+
+  return (
   <BOTTOM_STACK.Navigator
     initialRouteName="Home"
-    screenOptions={bottomTabScreenOptions}
+    screenOptions={{ ...bottomTabScreenOptions, tabBarStyle }}
   >
     <BOTTOM_STACK.Screen
       name="Home"
@@ -198,6 +201,7 @@ const SalesStaffBottomTabs = () => (
       }}
     />
   </BOTTOM_STACK.Navigator>
-);
+  );
+};
 
 export default SalesStaffBottomTabs;

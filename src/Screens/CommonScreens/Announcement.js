@@ -7,6 +7,7 @@ import {
   View,
 } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import AnnouncementCard from '../../Components/AnnouncementCard';
 import AnnouncementFilterBar from '../../Components/AnnouncementFilterBar';
 import MainHeaderComponent from '../../Components/MainHeaderComponent';
@@ -26,6 +27,7 @@ import {
 } from '../../Utils/announcementMappers';
 
 const Announcement = () => {
+  const insets = useSafeAreaInsets();
   const navigation = useNavigation();
   const [selectedFilter, setSelectedFilter] = useState('All');
   const [listData, setListData] = useState([]);
@@ -107,7 +109,10 @@ const Announcement = () => {
           />
         )}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.listContent}
+        contentContainerStyle={[
+          styles.listContent,
+          { paddingBottom: hp(4) + insets.bottom },
+        ]}
         ListHeaderComponent={
           <View>
             <MainHeaderComponent

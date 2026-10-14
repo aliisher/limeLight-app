@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { StatusBar, StyleSheet, Text, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Toast from 'react-native-simple-toast';
 import { Images } from '../../Assets';
 import Btn from '../../Components/Btn';
@@ -22,6 +23,7 @@ import { MyStyling } from '../../Constants/Styling';
 import Api, { getAuthToken } from '../../Services/Api_services';
 
 const ChangePassword = () => {
+  const insets = useSafeAreaInsets();
   const navigation = useNavigation();
   const [form, setForm] = useState({ newPassword: '', confirmPassword: '' });
   const [isLoading, setIsLoading] = useState(false);
@@ -137,7 +139,11 @@ const ChangePassword = () => {
     <View style={MyStyling.container2}>
       <StatusBar barStyle="dark-content" backgroundColor={Colors.white} />
 
-      <ScreenScrollView contentContainerStyle={styles.content}>
+      <ScreenScrollView
+        contentContainerStyle={[
+          styles.content,
+          { paddingBottom: hp(4) + insets.bottom },
+        ]}>
         <MainHeaderComponent title={Strings.changePasswordHeader} />
 
         <Text style={styles.heading} numberOfLines={1}>
