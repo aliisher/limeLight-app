@@ -63,7 +63,10 @@ const DisplayAudioPlayer = ({ audioUrl, apiDuration, onAudioPlay }) => {
             setPosition(0);
             playerRef.current?.seek(0);
           }}
-          onError={() => setIsPlaying(false)}
+          onError={error => {
+            console.log('Display training audio error:', audioUrl, error);
+            setIsPlaying(false);
+          }}
           style={styles.hiddenPlayer}
         />
       ) : null}
@@ -151,8 +154,9 @@ const TrainingDisplayCard = ({ item, onAudioPlay }) => {
 
 const styles = StyleSheet.create({
   hiddenPlayer: {
-    width: 0,
-    height: 0,
+    width: 1,
+    height: 1,
+    opacity: 0,
     position: 'absolute',
   },
   displayCard: {

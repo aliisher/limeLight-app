@@ -395,13 +395,17 @@ const Training = () => {
   };
 
   const handleDisplayAudioPlay = item => {
-    if (!item?.id) {
+    if (!item?.id || /complete/i.test(String(item?.status ?? ''))) {
       return;
     }
 
     updateTrainingItemStatus(item.id, () => {
       setDisplayData(prev =>
-        prev.filter(displayItem => displayItem.id !== item.id),
+        prev.map(displayItem =>
+          displayItem.id === item.id
+            ? { ...displayItem, status: 'Completed' }
+            : displayItem,
+        ),
       );
     });
   };
