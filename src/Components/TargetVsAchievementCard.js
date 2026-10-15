@@ -34,7 +34,11 @@ const ProgressRow = props => {
   );
 };
 
-const TargetVsAchievementCard = ({ items = defaultTargetData, isLoading }) => (
+const TargetVsAchievementCard = ({
+  items = defaultTargetData,
+  isLoading,
+  emptyMessage,
+}) => (
   <View style={styles.card}>
     <Text style={styles.title} numberOfLines={1}>
       {Strings.targetVsAchievement}
@@ -47,6 +51,8 @@ const TargetVsAchievementCard = ({ items = defaultTargetData, isLoading }) => (
       <View style={styles.loaderContainer}>
         <ActivityIndicator color={Colors.white} size="small" />
       </View>
+    ) : emptyMessage ? (
+      <Text style={styles.emptyMessage}>{emptyMessage}</Text>
     ) : (
       <View style={styles.progressList}>
         {items.map((item, index) => (
@@ -87,6 +93,13 @@ const styles = StyleSheet.create({
     paddingVertical: hp(2),
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  emptyMessage: {
+    fontFamily: Fonts.poppinsMedium,
+    fontSize: Fontsize.s,
+    color: Colors.white,
+    textAlign: 'center',
+    paddingVertical: hp(1.5),
   },
   progressList: {
     gap: hp(2.5),

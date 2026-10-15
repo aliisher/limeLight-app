@@ -152,6 +152,7 @@ const renderIncentiveItem = ({ item }) => (
 const StaffHomeContent = () => {
   const authToken = useSelector(state => state.AUTH.userData?.token);
   const [targetData, setTargetData] = useState([]);
+  const [targetMessage, setTargetMessage] = useState('');
   const [commission, setCommission] = useState([]);
   const [incentiveData, setIncentiveData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -178,11 +179,14 @@ const StaffHomeContent = () => {
         console.log('Dashboard Response:', JSON.stringify(resJson, null, 2));
 
         const dashboard = resJson?.data ?? {};
-        const targetMapped = mapTargetVsAchievement(
-          dashboard.target_vs_achievement,
-        );
+        const message = String(resJson?.message ?? '').trim();
+        const isNoTarget = /no\s+target/i.test(message);
+        const targetMapped = isNoTarget
+          ? []
+          : mapTargetVsAchievement(dashboard.target_vs_achievement);
         const commissionMapped = mapCommission(dashboard.commission);
 
+        setTargetMessage(isNoTarget ? message : '');
         setTargetData(targetMapped);
         setCommission(commissionMapped);
       } else {
@@ -292,7 +296,10 @@ const StaffHomeContent = () => {
           <Text style={styles.pageTitle} numberOfLines={1}>
             {Strings.myPerformance}
           </Text>
-          <TargetVsAchievementCard items={targetData} />
+          <TargetVsAchievementCard
+            items={targetData}
+            emptyMessage={targetMessage}
+          />
           <CommissionCard data={commission} />
           <CategoryBreakdownCard />
 
