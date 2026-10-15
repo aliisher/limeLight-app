@@ -150,6 +150,22 @@ export const resetToRoute = (navigation, routeName) => {
 };
 
 export const navigateAfterLogin = navigation => {
+  if (pendingNotificationParams && canOpenNotificationScreen()) {
+    const nav = findNavigatorWithRoute(navigation, 'Drawer');
+
+    if (nav) {
+      const params = pendingNotificationParams;
+      lastHandledNotificationKey = pendingNotificationKey;
+      pendingNotificationParams = null;
+      pendingNotificationKey = '';
+      nav.reset({
+        index: 0,
+        routes: [{ name: 'Drawer', params }],
+      });
+      return;
+    }
+  }
+
   resetToRoute(navigation, 'Drawer');
 };
 

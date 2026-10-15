@@ -78,5 +78,5 @@ export const getNotificationNavigationParams = remoteMessage => {
     return notificationScreenParams;
   }
 
-  return null;
+  return notificationScreenParams;
 };
